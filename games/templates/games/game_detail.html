@@ -1,0 +1,36 @@
+{% extends 'games/base.html' %}
+
+{% block title %}{{ game.name }}{% endblock %}
+
+{% block content %}
+<a href="/games/" style="color:#6c3aed; text-decoration:none;">← Все игры</a>
+<br><br>
+<div style="background:#1a1a1a; border-radius:10px; overflow:hidden; display:grid; grid-template-columns:1fr 1fr; max-width:900px;">
+    {% if game.image %}
+        <img src="{{ game.image.url }}" style="width:100%; height:400px; object-fit:cover;">
+    {% else %}
+        <div style="height:400px; background:#222; display:flex; align-items:center; justify-content:center; font-size:80px;">🎮</div>
+    {% endif %}
+    <div style="padding:30px;">
+        <p style="color:#6c3aed; font-size:13px;">{{ game.genre.name }} • {{ game.get_platform_display }}</p>
+        <h1 style="font-size:24px; margin:10px 0;">{{ game.name }}</h1>
+        <p style="color:#aaa; margin-bottom:15px;">📅 {{ game.release_year }}</p>
+        <p style="color:#ccc; line-height:1.6; margin-bottom:20px;">{{ game.description }}</p>
+        <p style="font-size:32px; font-weight:bold; color:#6c3aed; margin-bottom:20px;">{{ game.price }} сом</p>
+        {% if game.stock > 0 %}
+            <p style="color:#4ade80; margin-bottom:15px;">✓ В наличии ({{ game.stock }} шт)</p>
+            <form method="POST" action="/cart/add/{{ game.pk }}/">
+                {% csrf_token %}
+                <button type="submit" style="
+                    width:100%; padding:14px;
+                    background:#6c3aed; color:white;
+                    border:none; border-radius:8px;
+                    font-size:16px; cursor:pointer;
+                ">🛒 Добавить в корзину</button>
+            </form>
+        {% else %}
+            <p style="color:#e74c3c; font-size:18px;">✗ Нет в наличии</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

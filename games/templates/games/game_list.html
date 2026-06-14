@@ -1,0 +1,68 @@
+{% extends 'games/base.html' %}
+
+{% block title %}Игры{% endblock %}
+
+{% block content %}
+<h1 style="margin-bottom:20px; color:#6c3aed;">🎮 Магазин игр</h1>
+
+<!-- Поиск -->
+<form method="GET" style="margin-bottom:20px; display:flex; gap:10px;">
+    <input type="text" name="q" value="{{ query }}" placeholder="Поиск игр..."
+        style="padding:10px; border-radius:6px; border:1px solid #333; background:#1a1a1a; color:white; width:300px;">
+    {% if current_genre %}<input type="hidden" name="genre" value="{{ current_genre }}">{% endif %}
+    {% if current_platform %}<input type="hidden" name="platform" value="{{ current_platform }}">{% endif %}
+    <button type="submit" style="padding:10px 20px; background:#6c3aed; color:white; border:none; border-radius:6px; cursor:pointer;">Найти</button>
+</form>
+
+<!-- Фильтр по жанрам -->
+<div style="margin-bottom:15px; display:flex; gap:10px; flex-wrap:wrap;">
+    <a href="/games/" style="padding:7px 15px; border-radius:20px; text-decoration:none;
+        {% if not current_genre %}background:#6c3aed; color:white;{% else %}background:#222; color:#aaa;{% endif %}">Все</a>
+    {% for genre in genres %}
+    <a href="?genre={{ genre.slug }}" style="padding:7px 15px; border-radius:20px; text-decoration:none;
+        {% if current_genre == genre.slug %}background:#6c3aed; color:white;{% else %}background:#222; color:#aaa;{% endif %}">{{ genre.name }}</a>
+    {% endfor %}
+</div>
+
+<!-- Фильтр по платформе -->
+<div style="margin-bottom:25px; display:flex; gap:10px;">
+    <a href="?{% if current_genre %}genre={{ current_genre }}&{% endif %}" style="padding:7px 15px; border-radius:20px; text-decoration:none;
+        {% if not current_platform %}background:#333; color:white;{% else %}background:#1a1a1a; color:#aaa;{% endif %}">Все платформы</a>
+    <a href="?{% if current_genre %}genre={{ current_genre }}&{% endif %}platform=pc" style="padding:7px 15px; border-radius:20px; text-decoration:none;
+        {% if current_platform == 'pc' %}background:#333; color:white;{% else %}background:#1a1a1a; color:#aaa;{% endif %}">💻 PC</a>
+    <a href="?{% if current_genre %}genre={{ current_genre }}&{% endif %}platform=ps5" style="padding:7px 15px; border-radius:20px; text-decoration:none;
+        {% if current_platform == 'ps5' %}background:#333; color:white;{% else %}background:#1a1a1a; color:#aaa;{% endif %}">🎮 PS5</a>
+    <a href="?{% if current_genre %}genre={{ current_genre }}&{% endif %}platform=xbox" style="padding:7px 15px; border-radius:20px; text-decoration:none;
+        {% if current_platform == 'xbox' %}background:#333; color:white;{% else %}background:#1a1a1a; color:#aaa;{% endif %}">🎯 Xbox</a>
+</div>
+
+<!-- Сетка игр -->
+<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:20px;">
+    {% for game in games %}
+    <a href="/games/{{ game.pk }}/" style="text-decoration:none; color:white;">
+        <div style="background:#1a1a1a; border-radius:10px; overflow:hidden; border:1px solid #222; transition:transform 0.2s;"
+            onmouseover="this.style.transform='translateY(-3px)'; this.style.borderColor='#6c3aed'"
+            onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='#222'">
+            {% if game.image %}
+                <img src="{{ game.image.url }}" style="width:100%; height:200px; object-fit:cover;">
+            {% else %}
+                <div style="height:200px; background:#222; display:flex; align-items:center; justify-content:center; font-size:50px;">🎮</div>
+            {% endif %}
+            <div style="padding:15px;">
+                <p style="color:#6c3aed; font-size:12px; margin-bottom:5px;">{{ game.genre.name }} • {{ game.get_platform_display }}</p>
+                <h3 style="font-size:16px; margin-bottom:8px;">{{ game.name }}</h3>
+                <p style="color:#aaa; font-size:12px; margin-bottom:10px;">{{ game.release_year }}</p>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <p style="color:#6c3aed; font-size:20px; font-weight:bold;">{{ game.price }} сом</p>
+                    {% if game.stock > 0 %}
+                        <span style="color:#4ade80; font-size:12px;">✓ В наличии</span>
+                    {% else %}
+                        <span style="color:#e74c3c; font-size:12px;">✗ Нет</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}
