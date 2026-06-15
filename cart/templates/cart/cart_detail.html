@@ -1,0 +1,83 @@
+{% extends 'games/base.html' %}
+
+{% block title %}Корзина{% endblock %}
+
+{% block content %}
+<h1 style="margin-bottom:20px;">🛒 Корзина</h1>
+
+{% if items %}
+    <div style="display:grid; grid-template-columns:2fr 1fr; gap:20px; max-width:900px;">
+
+        <!-- Товары -->
+        <div>
+            {% for item in items %}
+            <div style="background:white; border-radius:10px; padding:20px; margin-bottom:15px; box-shadow:0 2px 8px rgba(0,0,0,0.1); display:flex; gap:15px; align-items:center;">
+                <!-- ИСПРАВЛЕНО: item.product.image заменено на item.game.image -->
+                {% if item.game.image %}
+                    <img src="{{ item.game.image.url }}" style="width:80px; height:80px; object-fit:cover; border-radius:8px;">
+                {% else %}
+                    <div style="width:80px; height:80px; background:#e0e0e0; border-radius:8px; display:flex; align-items:center; justify-content:center;">💻</div>
+                {% endif %}
+                <div style="flex:1;">
+                    <!-- ИСПРАВЛЕНО: item.product.name заменено на item.game.name -->
+                    <p style="font-weight:bold; margin-bottom:5px;">{{ item.game.name }}</p>
+                    <!-- ИСПРАВЛЕНО: item.product.price заменено на item.game.price -->
+                    <p style="color:#888; font-size:13px;">{{ item.game.price }} сом × {{ item.quantity }} шт</p>
+                </div>
+                <div style="text-align:right;">
+                    <!-- ВНИМАНИЕ: Убедитесь, что метод total_price прописан в модели CartItem или передается из view -->
+                    <p style="font-size:18px; font-weight:bold; color:#6c3aed; margin-bottom:10px;">{{ item.total_price }} сом</p>
+                    <a href="/cart/remove/{{ item.pk }}/" style="
+                        padding:6px 12px;
+                        background:#e74c3c;
+                        color:white;
+                        border-radius:5px;
+                        text-decoration:none;
+                        font-size:13px;
+                    ">❌ Убрать</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Итого -->
+        <div>
+            <div style="background:white; border-radius:10px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,0.1); position:sticky; top:20px;">
+                <h2 style="margin-bottom:15px;">Итого</h2>
+                <p style="font-size:28px; font-weight:bold; color:#1a1a2e; margin-bottom:20px;">{{ total }} сом</p>
+                <a href="/orders/create/" style="
+                    display:block;
+                    text-align:center;
+                    padding:14px;
+                    background:#1a1a2e;
+                    color:white;
+                    border-radius:8px;
+                    text-decoration:none;
+                    font-size:16px;
+                ">✅ Оформить заказ</a>
+                <a href="/games/" style="
+                    display:block;
+                    text-align:center;
+                    margin-top:10px;
+                    color:#888;
+                    text-decoration:none;
+                ">← Продолжить покупки</a>
+            </div>
+        </div>
+
+    </div>
+
+{% else %}
+    <div style="background:white; border-radius:10px; padding:40px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.1); max-width:500px;">
+        <p style="font-size:50px; margin-bottom:15px;">🛒</p>
+        <p style="font-size:18px; color:#888; margin-bottom:20px;">Корзина пуста</p>
+        <a href="/games/" style="
+            padding:12px 25px;
+            background:#1a1a2e;
+            color:white;
+            border-radius:8px;
+            text-decoration:none;
+        ">Перейти в магазин</a>
+    </div>
+{% endif %}
+{% endblock %}

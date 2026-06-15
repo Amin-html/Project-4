@@ -1,0 +1,42 @@
+{% extends 'games/base.html' %}
+
+{% block title %}Мои заказы{% endblock %}
+
+{% block content %}
+<h1 style="margin-bottom:20px;">📦 Мои заказы</h1>
+
+{% if orders %}
+    {% for order in orders %}
+    {# Рекомендуется заменить на {% url 'order_detail' order.pk %} если настроен urls.py #}
+    <a href="/orders/{{ order.pk }}/" style="text-decoration:none; color:#333;">
+        <div style="background:white; border-radius:10px; padding:20px; margin-bottom:15px; max-width:700px; box-shadow:0 2px 8px rgba(0,0,0,0.1); display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <p style="font-weight:bold; font-size:18px;">Заказ #{{ order.pk }}</p>
+                <p style="color:#888; font-size:13px; margin-top:5px;">📅 {{ order.created_at|date:"d.m.Y H:i" }}</p>
+                {# 🛠️ ИСПРАВЛЕНО: обратная связь по умолчанию называется orderitem_set #}
+                <p style="color:#888; font-size:13px;">{{ order.orderitem_set.count }} товаров</p>
+            </div>
+            <div style="text-align:right;">
+                <p style="font-size:22px; font-weight:bold; color:#1a1a2e; margin-bottom:8px;">{{ order.total_price }} сом</p>
+                <span style="
+                    padding:6px 12px;
+                    border-radius:20px;
+                    font-size:13px;
+                    font-weight:bold;
+                    {% if order.status == 'pending' %}background:#fef3c7; color:#d97706;
+                    {% elif order.status == 'processing' %}background:#dbeafe; color:#2563eb;
+                    {% elif order.status == 'completed' %}background:#d1fae5; color:#059669;
+                    {% else %}background:#fee2e2; color:#dc2626;{% endif %}
+                ">{{ order.get_status_display }}</span>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+{% else %}
+    <div style="background:white; border-radius:10px; padding:40px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.1); max-width:500px;">
+        <p style="font-size:50px; margin-bottom:15px;">📦</p>
+        <p style="font-size:18px; color:#888; margin-bottom:20px;">У тебя пока нет заказов</p>
+        <a href="/games/" style="padding:12px 25px; background:#1a1a2e; color:white; border-radius:8px; text-decoration:none;">Перейти в магазин</a>
+    </div>
+{% endif %}
+{% endblock %}

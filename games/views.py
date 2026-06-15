@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from .models import Game, Genre
 
+@login_required
 def game_list(request):
     genre_slug = request.GET.get('genre', '')
     platform = request.GET.get('platform', '')
@@ -23,6 +25,7 @@ def game_list(request):
         'query': query,
     })
 
+@login_required
 def game_detail(request, pk):
     game = get_object_or_404(Game, pk=pk)
     return render(request, 'games/game_detail.html', {'game': game})

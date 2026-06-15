@@ -1,0 +1,45 @@
+{% extends 'games/base.html' %}
+
+{% block title %}Заказ #{{ order.pk }}{% endblock %}
+
+{% block content %}
+<div style="background:white; border-radius:10px; padding:30px; max-width:700px; box-shadow:0 2px 8px rgba(0,0,0,0.1); margin: 20px auto;">
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
+        <h1>Заказ #{{ order.pk }}</h1>
+        <span style="
+            padding:8px 16px;
+            border-radius:20px;
+            font-size:14px;
+            font-weight:bold;
+            {% if order.status == 'pending' %}background:#fef3c7; color:#d97706;
+            {% elif order.status == 'processing' %}background:#dbeafe; color:#2563eb;
+            {% elif order.status == 'completed' %}background:#d1fae5; color:#059669;
+            {% else %}background:#fee2e2; color:#dc2626;{% endif %}
+        ">{{ order.get_status_display }}</span>
+    </div>
+
+    <p style="color:#888; margin-bottom:20px;">📅 {{ order.created_at|date:"d.m.Y H:i" }}</p>
+
+    <!-- Товары заказа -->
+    {# 🛠️ ИСПРАВЛЕНО: заменено order.items.all на order.orderitem_set.all #}
+    {% for item in order.orderitem_set.all %}
+    <div style="display:flex; justify-content:space-between; padding:15px 0; border-bottom:1px solid #f0f0f0;">
+        <div>
+            {# 🛠️ ИСПРАВЛЕНО: заменено item.product.name на item.game.name #}
+            <p style="font-weight:bold;">{{ item.game.name }}</p>
+            <p style="color:#888; font-size:13px;">{{ item.quantity }} шт × {{ item.price }} сом</p>
+        </div>
+        {# Выводим общую стоимость позиции #}
+        <p style="font-weight:bold;">{% widthratio item.price 1 item.quantity %} сом</p>
+    </div>
+    {% endfor %}
+
+    <!-- Итого -->
+    <div style="margin-top:20px; text-align:right;">
+        <p style="font-size:24px; font-weight:bold; color:#1a1a2e;">Итого: {{ order.total_price }} сом</p>
+    </div>
+
+    <a href="/orders/my/" style="display:inline-block; margin-top:20px; color:#1a1a2e; text-decoration:none;">← Мои заказы</a>
+</div>
+{% endblock %}

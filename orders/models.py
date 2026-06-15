@@ -10,7 +10,7 @@ class Order(models.Model):
         ('cancelled', 'Отменён')
     ]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_created=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     total_price = models.IntegerField(default=0)
 
